@@ -1,31 +1,31 @@
-def connect_to(ssid : str, passwd : str) -> None:
-    
-    """Conecta el microcontrolador a la red indicada.
-
-    Parameters
-    ----------
-    ssid : str
-        Nombre de la red a conectarse
-    passwd : str
-        Contraseña de la red
-    """
-    
+def connect_to(ssid: str, passwd: str) -> str:
     
     import network
     from time import sleep
-    
+
     sta_if = network.WLAN(network.STA_IF)
     if not sta_if.isconnected():
         print("Connecting to network...")
         sta_if.active(True)
         sta_if.connect(ssid, passwd)
         while not sta_if.isconnected():
-            print(".",end="")
-            sleep(.05)
-    
-    
-    """ print("IP/netmask/gateway/DNS", sta_if.ifconfig()) """
-    
+            print(".", end="")
+            sleep(0.05)
+
     return sta_if.ifconfig()[0]
 
-print(connect_to("Cooperadora Alumnos", ""))
+ip = connect_to("Cooperadora Alumnos", " ")
+
+from machine import Pin, I2C
+import ssd1306
+import time
+
+i2c = I2C(0, scl=Pin(22), sda=Pin(21))
+oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+
+oled.fill(0)
+oled.text("IP:", 0, 0)
+oled.text(ip, 0, 10)
+oled.show()
+
+
